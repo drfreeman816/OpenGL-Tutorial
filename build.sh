@@ -19,7 +19,7 @@ program="$1"
 #compiler="$2"
 #options="$3"
 
-libs="-lglfw -lGL"
+libs="-lglfw -lGLEW -lGL"
 
 clear
 
@@ -39,6 +39,6 @@ time g++ ./src/$program.cpp -Wall $libs -o ./bin/$program
 printf '\n'
 echo_purple "Running $program..."
 printf '\n'
-  time ./bin/$program
+  time optirun ./bin/$program
 
 printf '\n'
