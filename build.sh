@@ -16,24 +16,45 @@ echo_red() { echo "$(tput setaf 9)$*$(tput setaf 7)"; }
 
 # Select parameters
 program="$1"
-#compiler="$2"
-#options="$3"
+library="myOpenGL"
 
+# Libraries used
 libs="-lglfw -lGLEW -lGL"
 
 clear
 
-echo_green "Compiling $program with $compiler"
+echo_yellow "Compiling $program"
 
+# Create directories
 printf '\n'
 echo_purple "Creating directories..."
+rm -r obj lib bin
 mkdir -p obj lib bin
+
+# Compile headers
+printf '\n'
+echo_purple "Detecting headers..."
+headers=./inc/*.h
+sources=""
+for header in $headers
+do
+  file=${header##*/}
+  file=${file%.*}
+
+  printf '\n'
+  echo_cyan "$file"
+
+  sources="$sources ./src/$file.cpp"
+
+done
+
+#printf '\n'
+#echo_green "$sources"
 
 # Compile program and link
 printf '\n'
-
 echo_purple "Compiling $program..."
-time g++ ./src/$program.cpp -Wall $libs -o ./bin/$program
+time g++ ./src/$program.cpp $sources -Wall $libs -I ./inc -o ./bin/$program
 
 # Run test program
 printf '\n'
