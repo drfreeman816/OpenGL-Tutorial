@@ -11,12 +11,16 @@
 #include <string>
 #include <sstream>
 
-// Abstracted OpenGL
+// Renderer (Abstracted OpenGL)
 #include "Renderer.h"
-#include "VertexBufferLayout.h"
+#include "Texture.h"
 
 int main(void)
 {
+
+    /*      GLFW INIT      */
+
+    unsigned int winHeight = 800, winWidth = 800;
     GLFWwindow* window;
 
     // Initialize the library
@@ -24,7 +28,7 @@ int main(void)
         return -1;
 
     // Create a windowed mode window and its OpenGL context
-    window = glfwCreateWindow(800, 800, "OpenGL application", NULL, NULL);
+    window = glfwCreateWindow(winWidth, winHeight, "OpenGL application", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -43,6 +47,8 @@ int main(void)
     // VSync
     glfwSwapInterval(1);
 
+    /*      GLEW INIT      */
+
     // Initialize GLEW library
     if (glewInit() != GLEW_OK)
         std::cerr << "ERROR: Can't initialize GLEW library!" << std::endl;
@@ -50,14 +56,19 @@ int main(void)
     // Print OpenGL version
     std::cout << "Using OpenGL " << glGetString(GL_VERSION) << " by " << glGetString(GL_VENDOR) << std::endl;
 
+    /*      OPENGL BLENDING FUNCTION      */
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     /*      DATA      */
+
     // Vertices
     float vertices[] = {
-    //  x      y
-        -0.5f, -0.5f,   // 0
-         0.5f, -0.5f,   // 1
-         0.5f,  0.5f,   // 2
-        -0.5f,  0.5f    // 3
+    //  x      y      u      v
+        -0.5f, -0.5f,  0.0f,  0.0f, // 0
+         0.5f, -0.5f,  1.0f,  0.0f, // 1
+         0.5f,  0.5f,  1.0f,  1.0f, // 2
+        -0.5f,  0.5f,  0.0f,  1.0f  // 3
     };
     // Indices
     unsigned int indices[] = {
@@ -65,41 +76,45 @@ int main(void)
         2, 3, 0
     };
 
-    /*      VERTEX ARRAY     */
+    /*      RENDERER     */
 
-    // Create vertex array
+    // Vertex array
     VertexArray va;
 
-    /*      VERTEX BUFFER     */
+    // Vertex buffer        //vertices*floatsPerVertex
+    VertexBuffer vb(vertices, 4*4*sizeof(unsigned int));
 
-    // Create vertex buffer
-    VertexBuffer vb(vertices, 4*2*sizeof(unsigned int));
-
-    // Setup vertex layout
+    // Vertex buffer layout
     VertexBufferLayout layout;
     layout.push<float>(2);
+    layout.push<float>(2);
 
-    // Add vertex buffer to vertex array
+    // Add vertex buffer with its layout to vertex array
     va.addBuffer(vb, layout);
 
-    /*      INDEX BUFFER     */
-
-    // Create index buffer object
+    // Index buffer
     IndexBuffer ib(indices, 2*3);
 
-    /*      SHADERS     */
-
-    // Setup shaders
+    // Shader
     Shader shader("res/shaders/basic.shader");
-    shader.bind();
+    //shader.bind();
 
-    /*      Uniforms        */
+    // Renderer
+    Renderer renderer;
+
+    /*      UNIFORMS        */
     
     // Locate uniforms
     shader.setUniform4f("u_color",  0.8f, 0.3f, 0.8f, 1.0f);
     
     // Colors
     float r = 1.0f, dr = 0.05;
+
+    /*      TEXTURE     */
+
+    Texture texture("res/textures/lambda.png");
+    texture.bind();
+    shader.setUniform1i("u_texture", 0);
 
     /*      UNBIND EVERYTHING       */
 
@@ -108,15 +123,12 @@ int main(void)
     ib.unbind();
     shader.unbind();
 
-    /*      RENDERER       */
-
-    Renderer renderer;
-
     /*      GAME LOOP       */
 
     while (!glfwWindowShouldClose(window))
     {
-        // Render here
+
+        // Clear
         renderer.clear();
 
         // Send data through uniform
@@ -125,7 +137,7 @@ int main(void)
         r += dr;
         shader.setUniform4f("u_color",  r, 0.3f, 0.8f, 1.0f);
 
-        // Draw call for triangles
+        // Draw call
         renderer.draw(va, ib, shader);
 
         // Swap front and back buffers

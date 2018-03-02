@@ -31,12 +31,15 @@ echo_purple "Creating directories..."
 rm -r obj lib bin
 mkdir -p obj lib bin
 
-# Compile headers
+# Detect headers
 printf '\n'
 echo_purple "Detecting headers..."
-headers=./inc/*.h
+
+headers=( $(find ./inc/ -type f -name "*.h") )
+
+# loop over it
 sources=""
-for header in $headers
+for header in ${headers[@]}
 do
   file=${header##*/}
   file=${file%.*}
@@ -44,12 +47,17 @@ do
   printf '\n'
   echo_cyan "$file"
 
-  sources="$sources ./src/$file.cpp"
+  echo_green "$header"
+
+  source=( $(find ./src/ -name "$file.cpp") )
+
+  sources="$sources $source"
 
 done
 
-#printf '\n'
-#echo_green "$sources"
+printf '\n'
+echo_cyan "Source files:"
+echo_green "$sources"
 
 # Compile program and link
 printf '\n'

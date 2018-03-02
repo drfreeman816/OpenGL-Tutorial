@@ -1,7 +1,14 @@
 #pragma once
 
+#include <iostream>
+#include <fstream>
 #include <string>
+#include <sstream>
 #include <unordered_map>
+
+#include <GL/glew.h>
+
+#include "Exception.h"
 
 struct shaderProgramSource{
     std::string vertex;
@@ -26,6 +33,7 @@ public:
     void unbind() const;
 
     // Set uniforms
+    void setUniform1i(const std::string&, int);
     void setUniform4f(const std::string&, float, float, float, float);
 
 private:

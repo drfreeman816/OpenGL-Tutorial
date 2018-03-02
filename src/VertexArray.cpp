@@ -1,14 +1,9 @@
 #include "VertexArray.h"
 
-#include "VertexBufferLayout.h"
-#include "Renderer.h"
-
 // Constructor
 VertexArray::VertexArray(){
 
-    // Create vertex array object
     glGenVertexArrays(1, &_rendererID);
-    // Bind vertex array
     bind();
 
 }

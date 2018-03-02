@@ -4,7 +4,7 @@
 
 #include <GL/glew.h>
 
-#include "Renderer.h"
+#include "Exception.h"
 
 struct VertexBufferElement{
 

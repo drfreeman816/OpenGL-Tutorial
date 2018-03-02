@@ -1,17 +1,12 @@
 #include "Shader.h"
 
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
-
-#include "Renderer.h"
-
 Shader::Shader(const std::string& filePath)
     : _rendererID(0),_filePath(filePath) {
 
     shaderProgramSource shaderSource = parseShader(filePath);
     _rendererID = createShader(shaderSource);
+    // testing
+    bind();
 
 }
 
@@ -45,6 +40,10 @@ unsigned int Shader::getUniformLocation(const std::string& name){
         std::cout << "WARNING: uniform '" << name << "' may not exist!" << std::endl;
 
     return location;
+}
+
+void Shader::setUniform1i(const std::string& name, int v){
+    glUniform1i(getUniformLocation(name), v);
 }
 
 void Shader::setUniform4f(const std::string& name, float v0, float v1, float v2, float v3){

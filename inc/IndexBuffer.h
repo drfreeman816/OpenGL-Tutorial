@@ -1,5 +1,9 @@
 #pragma once
 
+#include <GL/glew.h>
+
+#include "Exception.h"
+
 class IndexBuffer{
 
     unsigned int _rendererID;

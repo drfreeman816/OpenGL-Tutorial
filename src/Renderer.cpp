@@ -1,21 +1,5 @@
 #include "Renderer.h"
 
-#include <iostream>
-
-// Clear errors
-void GLClearError(){
-    while (glGetError() != GL_NO_ERROR);
-}
-
-// Check for errors
-bool GLLogCall(const char* function, const char* file, unsigned int line){
-    while (GLenum error = glGetError()){
-        std::cerr << "[OpenGL ERROR] (" << error << "): " << function << " in " << file << ":" << line << std::endl;
-        return false;
-    }
-    return true;
-}
-
 // Clear
 void Renderer::clear() const {
     glClear(GL_COLOR_BUFFER_BIT);
